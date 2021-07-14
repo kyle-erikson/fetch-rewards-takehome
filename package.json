@@ -1,0 +1,29 @@
+{
+  "name": "fetch-rewards-takehome",
+  "version": "1.0.0",
+  "description": "Submission for Fetch Rewards take-home exercise",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev ./index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyle-erikson/fetch-rewards-takehome.git"
+  },
+  "author": "kyle-erikson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kyle-erikson/fetch-rewards-takehome/issues"
+  },
+  "homepage": "https://github.com/kyle-erikson/fetch-rewards-takehome#readme",
+  "devDependencies": {
+    "@types/node": "^16.3.2",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "express": "^4.17.1"
+  }
+}
