@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, Router } from "express";
+import express, { Application } from "express";
 import routes from "./routes";
 
 const app: Application = express();
@@ -10,9 +10,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
 try {
-    app.listen(port, (): void => {
-        console.log(`Connected successfully on port ${port}`);
-    });
+  app.listen(port, (): void => {
+    console.log(`Connected successfully on port ${port}`);
+  });
 } catch (error) {
-    console.error(`Error occured: ${error.message}`);
+  console.error(`Error occurred: ${error.message}`);
 }
+
+export const server = app;

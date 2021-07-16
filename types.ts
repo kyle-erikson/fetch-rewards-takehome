@@ -8,5 +8,5 @@ export interface TransactionWithTime extends Transaction {
 }
 
 export interface Spend {
-  points: number
+  points: number;
 }

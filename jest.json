@@ -1,0 +1,13 @@
+{
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "automock": false,
+  "coveragePathIgnorePatterns": ["/node_modules/"],
+  "restoreMocks": true,
+  "clearMocks": true,
+  "resetMocks": true
+}
