@@ -26,8 +26,7 @@ const AddTransaction = async (req: Request, res: Response) => {
       });
     }
 
-    SetBalance(transaction.payer, transaction.points);
-    heap.push(transaction);
+    PushTransaction(transaction);
 
     return res.status(200).json({
       message: "Transaction added successfully.",
@@ -98,4 +97,9 @@ const ViewBalances = async (req: Request, res: Response) => {
   else return res.status(200).json(currentBalances);
 };
 
-export { AddTransaction, SpendPoints, ViewBalances, heap };
+const PushTransaction = (transaction: TransactionWithTime) => {
+  SetBalance(transaction.payer, transaction.points);
+  heap.push(transaction);
+};
+
+export { AddTransaction, SpendPoints, ViewBalances, PushTransaction, heap };

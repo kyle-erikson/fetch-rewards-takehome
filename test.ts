@@ -6,12 +6,13 @@ import {
   ValidateTransaction,
   totalBalances,
 } from "./helpers";
-import { heap } from "./controller";
+import { heap, PushTransaction } from "./controller";
 
 const requestWithSupertest = supertest(server);
 
 beforeEach(() => {
   totalBalances.clear();
+  emptyTheHeap();
 });
 
 afterAll(() => {
@@ -21,13 +22,13 @@ afterAll(() => {
 describe("User Endpoints", () => {
   describe("POST /addTransaction", () => {
     test("POST /addTransaction add single transaction should return success", async () => {
-      let transactionPayload = {
+      const transactionPayload = {
         payer: "DANNON",
         points: 1000,
         timestamp: "2020-11-02T14:00:00Z",
       };
 
-      let expectedResponse = {
+      const expectedResponse = {
         message: "Transaction added successfully.",
       };
 
@@ -44,12 +45,12 @@ describe("User Endpoints", () => {
     });
 
     test("POST /addTransaction add malformed transaction points invalid should return error", async () => {
-      let transactionPayload = {
+      const transactionPayload = {
         payer: "DANNON",
         points: "1000",
         timestamp: "2020-11-02T14:00:00Z",
       };
-      let expectedResponse = {
+      const expectedResponse = {
         message: "Please correct request body.",
         error: ["Points value: '1000' needs to be a number."],
       };
@@ -67,12 +68,12 @@ describe("User Endpoints", () => {
     });
 
     test("POST /addTransaction add malformed transaction timestamp invalid should return error", async () => {
-      let transactionPayload = {
+      const transactionPayload = {
         payer: "DANNON",
         points: 1000,
         timestamp: "2020-11-02T14",
       };
-      let expectedResponse = {
+      const expectedResponse = {
         message: "Please correct request body.",
         error: [
           "Timestamp: '2020-11-02T14' does not match a valid ISO-8061 DateTime string with Timezone designator.",
@@ -92,12 +93,12 @@ describe("User Endpoints", () => {
     });
 
     test("POST /addTransaction add malformed transaction points and timestamp invalid should return error", async () => {
-      let transactionPayload = {
+      const transactionPayload = {
         payer: "DANNON",
         points: "1000",
         timestamp: "2020-11-02T14",
       };
-      let expectedResponse = {
+      const expectedResponse = {
         message: "Please correct request body.",
         error: [
           "Points value: '1000' needs to be a number.",
@@ -120,49 +121,40 @@ describe("User Endpoints", () => {
 
   describe("POST /spendPoints", () => {
     test("POST /spendPoints spend 5000 points should return accounts that paid", async () => {
-      heap.push({
+      PushTransaction({
         payer: "DANNON",
         points: 1000,
         timestamp: new Date("2020-11-02T14:00:00Z"),
       });
-      SetBalance("DANNON", 1000);
-
-      heap.push({
+      PushTransaction({
         payer: "UNILEVER",
         points: 200,
         timestamp: new Date("2020-10-31T11:00:00Z"),
       });
-      SetBalance("UNILEVER", 200);
-
-      heap.push({
+      PushTransaction({
         payer: "DANNON",
         points: -200,
         timestamp: new Date("2020-10-31T15:00:00Z"),
       });
-      SetBalance("DANNON", -200);
-
-      heap.push({
+      PushTransaction({
         payer: "MILLER COORS",
         points: 10000,
         timestamp: new Date("2020-11-01T14:00:00Z"),
       });
-      SetBalance("MILLER COORS", 10000);
-
-      heap.push({
+      PushTransaction({
         payer: "DANNON",
         points: 300,
         timestamp: new Date("2020-10-31T10:00:00Z"),
       });
-      SetBalance("DANNON", 300);
 
-      let transactionPayload = {
+      const transactionPayload = {
         points: 5000,
       };
 
-      let expectedResponse = {
-        DANNON: -1100,
+      const expectedResponse = {
+        DANNON: -100,
         UNILEVER: -200,
-        "MILLER COORS": -3700,
+        "MILLER COORS": -4700,
       };
 
       const res = await requestWithSupertest
@@ -177,12 +169,32 @@ describe("User Endpoints", () => {
       expect(res.body).toEqual(expectedResponse);
     });
 
-    //Need test for not enough points
+    test("POST /spendPoints not enough points to cover transaction should return error", async () => {
+      const transactionPayload = {
+        points: 5000,
+      };
+
+      const expectedResponse = {
+        message:
+          "Not enough total points across all payers to cover this spend."
+      };
+
+      const res = await requestWithSupertest
+        .post("/spendPoints")
+        .send(transactionPayload)
+        .set("Accept", "application/json");
+
+      expect(res.status).toEqual(500);
+      expect(res.headers["content-type"]).toEqual(
+        "application/json; charset=utf-8"
+      );
+      expect(res.body).toEqual(expectedResponse);
+    });
   });
 
   describe("GET /viewBalances", () => {
     test("GET /viewBalances no balances should exist ", async () => {
-      let expectedResponse = {
+      const expectedResponse = {
         message: "No balances on record.",
       };
 
@@ -196,7 +208,7 @@ describe("User Endpoints", () => {
     });
 
     test("GET /viewBalances should return current balances in json ", async () => {
-      let expectedResponse = {
+      const expectedResponse = {
         DANNON: 1000,
         UNILEVER: 0,
         "MILLER COORS": 5300,
@@ -216,3 +228,9 @@ describe("User Endpoints", () => {
     });
   });
 });
+
+const emptyTheHeap = () => {
+  while (!heap.empty()) {
+    heap.pop();
+  }
+};
