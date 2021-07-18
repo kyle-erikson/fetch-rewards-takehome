@@ -43,7 +43,15 @@ const SpendPoints = async (req: Request, res: Response) => {
   let { points } = req.body as Spend;
   let spentTransactions = new Map<string, number>();
 
-  if (GetTotalBalance() < points) {
+  if (points < 0) {
+    return res
+      .status(400)
+      .json({
+        message:
+          "Points must be greater than zero.",
+      });
+  }
+  else if (GetTotalBalance() < points) {
     return res
       .status(500)
       .json({

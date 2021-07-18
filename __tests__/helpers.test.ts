@@ -1,5 +1,5 @@
-import { SetBalance, GetBalances, totalBalances, GetTotalBalance, ValidateTransaction } from "./helpers";
-import { TransactionWithTime } from "./types";
+import { SetBalance, GetBalances, totalBalances, GetTotalBalance, ValidateTransaction } from "../helpers";
+import { TransactionWithTime } from "../types";
 
 afterEach(() => {
   totalBalances.clear();

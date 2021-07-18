@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev ./index.ts",
-    "test:cov": "npm test:run --collect-coverage && npm test:open-cov",
-    "test": "jest --watch --config jest.json"
+    "test": "jest --watchAll --config jest.json"
   },
   "repository": {
     "type": "git",

@@ -1,12 +1,12 @@
-import { server } from ".";
+import { server } from "..";
 import supertest from "supertest";
 import {
   SetBalance,
   GetBalances,
   ValidateTransaction,
   totalBalances,
-} from "./helpers";
-import { heap, PushTransaction } from "./controller";
+} from "../helpers";
+import { heap, PushTransaction } from "../controller";
 
 const requestWithSupertest = supertest(server);
 
@@ -163,6 +163,28 @@ describe("User Endpoints", () => {
         .set("Accept", "application/json");
 
       expect(res.status).toEqual(200);
+      expect(res.headers["content-type"]).toEqual(
+        "application/json; charset=utf-8"
+      );
+      expect(res.body).toEqual(expectedResponse);
+    });
+
+    test("POST /spendPoints points payload is negative", async () => {
+      const transactionPayload = {
+        points: -5000,
+      };
+
+      const expectedResponse = {
+        message:
+          "Points must be greater than zero."
+      };
+
+      const res = await requestWithSupertest
+        .post("/spendPoints")
+        .send(transactionPayload)
+        .set("Accept", "application/json");
+
+      expect(res.status).toEqual(400);
       expect(res.headers["content-type"]).toEqual(
         "application/json; charset=utf-8"
       );

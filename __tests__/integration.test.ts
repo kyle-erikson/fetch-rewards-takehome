@@ -1,13 +1,13 @@
-import { server } from ".";
+import { server } from "..";
 import supertest from "supertest";
 import {
   SetBalance,
   GetBalances,
   ValidateTransaction,
   totalBalances,
-} from "./helpers";
-import { heap } from "./controller";
-import { Transaction, TransactionWithTime } from "./types";
+} from "../helpers";
+import { heap } from "../controller";
+import { Transaction, TransactionWithTime } from "../types";
 
 const requestWithSupertest = supertest(server);
 
